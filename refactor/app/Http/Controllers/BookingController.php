@@ -7,6 +7,7 @@ use DTApi\Http\Requests;
 use DTApi\Models\Distance;
 use Illuminate\Http\Request;
 use DTApi\Repository\BookingRepository;
+use Auth;
 
 /**
  * Class BookingController
@@ -35,15 +36,19 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        if($user_id = $request->get('user_id')) {
+	    $user = Auth::user();
+		$data = $request->all();
+	    if($user->id == $request->get('user_id')) {
 
-            $response = $this->repository->getUsersJobs($user_id);
+            $response = $this->repository->getUsersJobs($user->id);
 
         }
-        elseif($request->__authenticatedUser->user_type == env('ADMIN_ROLE_ID') || $request->__authenticatedUser->user_type == env('SUPERADMIN_ROLE_ID'))
+        elseif($user->user_type == env('ADMIN_ROLE_ID') || $user->user_type == env('SUPERADMIN_ROLE_ID'))
         {
-            $response = $this->repository->getAll($request);
-        }
+            $response = $this->repository->getAll($data);
+        }else{
+			$response = [];
+	    }
 
         return response($response);
     }
@@ -66,8 +71,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-
-        $response = $this->repository->store($request->__authenticatedUser, $data);
+		$user = Auth::user();
+        $response = $this->repository->store($user, $data);
 
         return response($response);
 
@@ -81,7 +86,7 @@ class BookingController extends Controller
     public function update($id, Request $request)
     {
         $data = $request->all();
-        $cuser = $request->__authenticatedUser;
+        $cuser = Auth::user();
         $response = $this->repository->updateJob($id, array_except($data, ['_token', 'submit']), $cuser);
 
         return response($response);
@@ -123,7 +128,7 @@ class BookingController extends Controller
     public function acceptJob(Request $request)
     {
         $data = $request->all();
-        $user = $request->__authenticatedUser;
+        $user = Auth::user();
 
         $response = $this->repository->acceptJob($data, $user);
 
@@ -133,7 +138,7 @@ class BookingController extends Controller
     public function acceptJobWithId(Request $request)
     {
         $data = $request->get('job_id');
-        $user = $request->__authenticatedUser;
+        $user =  Auth::user();
 
         $response = $this->repository->acceptJobWithId($data, $user);
 
@@ -147,7 +152,7 @@ class BookingController extends Controller
     public function cancelJob(Request $request)
     {
         $data = $request->all();
-        $user = $request->__authenticatedUser;
+        $user =  Auth::user();
 
         $response = $this->repository->cancelJobAjax($data, $user);
 
@@ -185,7 +190,7 @@ class BookingController extends Controller
     public function getPotentialJobs(Request $request)
     {
         $data = $request->all();
-        $user = $request->__authenticatedUser;
+        $user =  Auth::user();
 
         $response = $this->repository->getPotentialJobs($user);
 
@@ -222,7 +227,7 @@ class BookingController extends Controller
         } else {
             $flagged = 'no';
         }
-        
+
         if ($data['manually_handled'] == 'true') {
             $manually_handled = 'yes';
         } else {

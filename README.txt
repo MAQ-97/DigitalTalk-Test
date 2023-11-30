@@ -1,45 +1,30 @@
-Do at least ONE of the following tasks: refactor is mandatory. Write tests is optional, will be good bonus to see it. 
-Please do not invest more than 2-4 hours on this.
-Upload your results to a Github repo, for easier sharing and reviewing.
+If we talk about the code according to my experience the code is some what a terrible code. I would
+start from the basic thing and will go into details in following points:
 
-Thank you and good luck!
+1) First thing which I would like to mention is the naming convention controller and repository name
+should be JobController and JobRepository since it is dealing with job and not bookings
 
+2) Conditions are not written properly for example in the first index function the condition for checking
+auth user id and request user id was not correct
 
+3) Then the case are not handled properly like for example in index function there is a conditional properly
+where if a user is neither the same user who has requested for the jobs nor the admin or super admin in that case
+it should return response as an empty.
 
-Code to refactor
-=================
-1) app/Http/Controllers/BookingController.php
-2) app/Repository/BookingRepository.php
+4). Then Auth check was not defined properly I have written the correct way of getting auth user.
 
-Code to write tests (optional)
-=====================
-3) App/Helpers/TeHelper.php method willExpireAt
-4) App/Repository/UserRepository.php, method createOrUpdate
+5). Then in repository the code which is written for validation should handle in request with laravel validations.
 
+6). In db boolean values like immediate in jobs table is declared as string which is not a good practice as
+there is always a margin of error in string value.
 
-----------------------------
+7). In storeJobEmail the addresses to the data has been passed when there is no use of it.
 
-What I expect in your repo:
+8). Sub functions are not there alot of conditions are used instead of functions.
 
-X. A readme with:   Your thoughts about the code. What makes it amazing code. Or what makes it ok code. Or what makes it terrible code. How would you have done it. Thoughts on formatting, structure, logic.. The more details that you can provide about the code (what's terrible about it or/and what is good about it) the easier for us to assess your coding style, mentality etc
+9). Then again in baseRepository alot of function as been defined which has no need because laravel
+eloquent already provide then these functions are useful it we are working on core php or any other framework which don't
+provide eloquent.
 
-And 
-
-Y.  Refactor it if you feel it needs refactoring. The more love you put into it. The easier for us to asses your thoughts, code principles etc
-
-
-IMPORTANT: Make two commits. First commit with original code. Second with your refactor so we can easily trace changes. 
-
-
-NB: you do not need to set up the code on local and make the web app run. It will not run as its not a complete web app. This is purely to assess you thoughts about code, formatting, logic etc
-
-
-===== So expected output is a GitHub link with either =====
-
-1. Readme described above (point X above) + refactored code 
-OR
-2. Readme described above (point X above) + refactored core + a unit test of the code that we have sent
-
-Thank you!
-
-
+//
+I have also added two test in Test/Unit
